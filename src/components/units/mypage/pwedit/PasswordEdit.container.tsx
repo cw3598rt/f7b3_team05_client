@@ -19,11 +19,13 @@ const schema = yup.object({
 });
 
 export default function PWedit() {
+  const originpasswordInputRef = useRef();
   const passwordInputRef = useRef();
   const password2InputRef = useRef();
+  const [openEye, setOpenEye] = useState(false);
   const [openEye1, setOpenEye1] = useState(false);
   const [openEye2, setOpenEye2] = useState(false);
-
+  const [password, setPassword] = useState("");
   const { register, handleSubmit, setValue, formState } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -34,6 +36,15 @@ export default function PWedit() {
   }, []);
 
   const onClickShowPassword = () => {
+    originpasswordInputRef.current.type = "text";
+    setOpenEye(true);
+    setTimeout(() => {
+      originpasswordInputRef.current.type = "password";
+      setOpenEye(false);
+    }, 1000);
+  };
+
+  const onClickShowPassword1 = () => {
     passwordInputRef.current.type = "text";
     setOpenEye1(true);
     setTimeout(() => {
@@ -59,13 +70,18 @@ export default function PWedit() {
       handleSubmit={handleSubmit}
       setValue={setValue}
       formState={formState}
+      openEye={openEye}
       openEye1={openEye1}
       openEye2={openEye2}
+      originpasswordInputRef={originpasswordInputRef}
       passwordInputRef={passwordInputRef}
       password2InputRef={password2InputRef}
       onClickShowPassword={onClickShowPassword}
+      onClickShowPassword1={onClickShowPassword1}
       onClickShowPassword2={onClickShowPassword2}
       onSubmitChangePassword={onSubmitChangePassword}
+      setPassword={setPassword}
+      password={password}
     />
   );
 }

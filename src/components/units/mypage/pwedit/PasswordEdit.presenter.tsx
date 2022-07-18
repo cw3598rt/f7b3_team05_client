@@ -4,7 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import WebPurpleButton from "../../../commons/buttons/buttonDesktop/WebPurpleButton";
 import WebBlackButton from "../../../commons/buttons/buttonDesktop/WebBlackButton";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
+const PasswordChecklist = dynamic(() => import("react-password-checklist"), {
+  ssr: false,
+});
 export default function PWeditUI(props) {
   return (
     <S.Container>
@@ -18,12 +22,14 @@ export default function PWeditUI(props) {
             </S.TitleBox>
             <S.PasswordInputBox>
               <S.PasswordInput
-                onChange={(e) => props.setValue("password", e.target.value)}
-                name="password"
-                ref={props.passwordInputRef}
+                onChange={(e) =>
+                  props.setValue("originpassword", e.target.value)
+                }
+                name="originpassword"
+                ref={props.originpasswordInputRef}
                 type="password"
               />
-              {props.openEye1 && (
+              {props.openEye && (
                 <FontAwesomeIcon
                   icon={faEye}
                   style={{
@@ -33,7 +39,7 @@ export default function PWeditUI(props) {
                   }}
                 />
               )}
-              {!props.openEye1 && (
+              {!props.openEye && (
                 <FontAwesomeIcon
                   onClick={props.onClickShowPassword}
                   icon={faEyeSlash}
@@ -53,7 +59,10 @@ export default function PWeditUI(props) {
             </S.TitleBox>
             <S.PasswordInputBox>
               <S.PasswordInput
-                onChange={(e) => props.setValue("password", e.target.value)}
+                onChange={(e) => {
+                  props.setValue("password", e.target.value);
+                  props.setPassword(e.target.value);
+                }}
                 name="password"
                 ref={props.passwordInputRef}
                 type="password"
@@ -70,7 +79,7 @@ export default function PWeditUI(props) {
               )}
               {!props.openEye1 && (
                 <FontAwesomeIcon
-                  onClick={props.onClickShowPassword}
+                  onClick={props.onClickShowPassword1}
                   icon={faEyeSlash}
                   style={{
                     color: "purple",
@@ -81,14 +90,18 @@ export default function PWeditUI(props) {
               )}
             </S.PasswordInputBox>
             <S.Error>{props.formState.errors.password?.message}</S.Error>
-            <S.WarningBox>
-              <S.WarningMessage>
-                *8~14자의 영문,숫자 혼합만 사용가능
-              </S.WarningMessage>
-              <S.WarningMessage>
-                *숫자만으로 이루어진 비밀번호는 사용 할 수 없음
-              </S.WarningMessage>
-            </S.WarningBox>
+            <PasswordChecklist
+              rules={["minLength", "lowercase", "number"]}
+              minLength={8}
+              maxLength={14}
+              value={props.password}
+              iconSize={10}
+              messages={{
+                minLength: "최소 8자리 이상 입력해야 합니다.",
+                lowercase: "영문(소문자)을 포함해야 합니다.",
+                number: "숫자를 포함해야 합니다.",
+              }}
+            />
           </S.PasswordBox>
         </S.PasswordBoxes>
         <S.PasswordVerificationBoxes>
