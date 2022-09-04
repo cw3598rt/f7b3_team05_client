@@ -15,6 +15,7 @@ import {
   GoogleInfoState,
   KakaoInfoState,
   userInfoState,
+  visitedPageState,
 } from "../../../commons/store";
 import Swal from "sweetalert2";
 import { IDataProps } from "./Login.types";
@@ -53,9 +54,11 @@ export default function Login() {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
 
+  const [visitedPage, setVisitedPage] = useRecoilState(visitedPageState);
   const [googleInfo, setGoogleInfo] = useRecoilState(GoogleInfoState);
   const [kakaoInfo, setKakaoInfo] = useRecoilState(KakaoInfoState);
   const [socialLogingql] = useMutation(SOCIAL_LOGIN);
+
   useEffect(() => {
     register("email", { required: true });
     register("password");
@@ -88,15 +91,11 @@ export default function Login() {
       setAccessToken(Token);
       setUserInfo(user);
 
-      Swal.fire({
-        title: "반갑습니다",
-        icon: "success",
-        showConfirmButton: false,
-        timer: 1000,
-        backdrop: false,
-      });
-      // router.push("/home");
-      router.back();
+      if (visitedPage) {
+        router.push(visitedPage);
+      } else if (!visitedPage) {
+        router.push(`/home`);
+      }
     } catch (error) {
       Swal.fire({
         title: "로그인에 실패하였습니다",
@@ -154,13 +153,6 @@ export default function Login() {
               })
               .then((result) => {
                 setUserInfo(result.data.fetchUserLoggedIn);
-                Swal.fire({
-                  title: "반갑습니다",
-                  icon: "success",
-                  showConfirmButton: false,
-                  timer: 1000,
-                  backdrop: false,
-                });
               })
               .catch((error) =>
                 Swal.fire({
@@ -181,7 +173,11 @@ export default function Login() {
               backdrop: false,
             })
           );
-        router.push(`/home`);
+        if (visitedPage) {
+          router.push(visitedPage);
+        } else if (!visitedPage) {
+          router.push(`/home`);
+        }
       })
       .catch((error) => {
         // Handle Errors here.
@@ -228,13 +224,6 @@ export default function Login() {
                   })
                   .then((result) => {
                     setUserInfo(result.data.fetchUserLoggedIn);
-                    Swal.fire({
-                      title: "반갑습니다",
-                      icon: "success",
-                      showConfirmButton: false,
-                      timer: 1000,
-                      backdrop: false,
-                    });
                   })
                   .catch((error) =>
                     Swal.fire({
@@ -256,7 +245,11 @@ export default function Login() {
                 })
               );
 
-            router.push("/home");
+            if (visitedPage) {
+              router.push(visitedPage);
+            } else if (!visitedPage) {
+              router.push(`/home`);
+            }
           },
           fail: function (error: Error) {
             alert((error as Error).message);
